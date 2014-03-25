@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+    <RelativeLayout 
+        android:background="@drawable/item_line_bg"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="10dip"
+    	android:layout_marginRight="10dip"
+    	android:layout_marginTop="20dip"
+    	android:layout_marginBottom="20dip"
+    	android:padding="10dip">
+        <ImageView 
+            android:id="@+id/icon_search"
+            android:src="@drawable/icon_search"
+            android:layout_centerVertical="true"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"/> 
+        <EditText 
+            android:id="@+id/icon_search_edit"
+    	    android:textSize="17.0sp" 
+    	    android:hint="搜索"
+    	    android:textColorHint="#ffbfbfbf" 
+            android:textColor="#50335e"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:background="@null"
+            android:layout_toRightOf="@id/icon_search"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content" />       
+    </RelativeLayout>
+	<TextView 
+	    android:text="注：可查询公交线路或者站点"
+	    android:textSize="14sp"
+    	android:layout_marginLeft="10dip"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content" />
+</LinearLayout>

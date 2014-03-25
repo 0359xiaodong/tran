@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dip">
+    <RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="55dip"
+	   	android:background="#ffff4444" 
+	   	android:alpha="0.3">
+	    
+	</RelativeLayout>
+	<TextView 
+        android:id="@+id/title_name"
+    	android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
+    	android:layout_width="wrap_content"
+    	android:gravity="center"
+    	android:singleLine="true"
+    	android:layout_height="wrap_content"/>
+	<ProgressBar 
+	    android:id="@+id/title_pb"
+	    android:visibility="invisible"
+	    android:layout_marginLeft="5dip"
+	    android:layout_toRightOf="@id/title_name"
+        android:layout_centerInParent="true"
+		android:layout_width="wrap_content" 
+      	android:layout_height="wrap_content"
+      	style="?android:attr/progressBarStyleSmall">
+	</ProgressBar>
+	<TextView 
+	    android:id="@+id/title_right"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="15dip"
+		android:textColor="@android:color/white"
+        android:visibility="gone"        
+        android:textSize="14sp"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"/>	
+	<ImageView 
+	    android:id="@+id/title_left"
+        android:layout_centerVertical="true"
+        android:padding="15dip"
+        android:visibility="gone"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"/>
+	      	
+    <LinearLayout 
+ 	    android:id="@+id/line_right"
+  		android:layout_width="1dip"
+  		android:layout_height="55dip"
+  		android:orientation="vertical"
+  		android:layout_alignLeft="@id/title_right"
+  		android:background="@android:color/white"
+  		android:visibility="gone"
+  		android:alpha="0.3">
+     
+ 	</LinearLayout>
+ 	<LinearLayout 
+ 	    android:id="@+id/line_left"
+  		android:layout_width="1dip"
+  		android:layout_height="55dip"
+  		android:orientation="vertical"
+  		android:layout_alignRight="@id/title_left"
+  		android:background="@android:color/white"
+  		android:visibility="gone"
+  		android:alpha="0.3">
+     
+ 	</LinearLayout>
+</RelativeLayout>

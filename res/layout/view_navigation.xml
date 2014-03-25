@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" 
+    android:background="@android:color/white"   
+    android:orientation="vertical" >
+	<RelativeLayout 
+   	    android:background="@drawable/item_line_bg"
+   	    android:layout_margin="10dip"
+	    android:paddingTop="2.0dip" 
+	    android:paddingBottom="2.0dip" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" >
+    	<ImageView 
+    	    android:id="@+id/imagebtn_navsearch_switch" 
+    	    android:layout_width="wrap_content" 
+    	    android:layout_height="wrap_content" 
+    	    android:layout_marginLeft="15.0dip" 
+    	    android:src="@drawable/btn_route_icon_switch_selector" 
+    	    android:scaleType="center" 
+    	    android:layout_alignParentLeft="true" 
+    	    android:layout_centerVertical="true" />
+    	<EditText 
+    	    android:textSize="17.0sp" 
+    	    android:textColorHint="#ffbfbfbf" 
+    	    android:gravity="center_vertical" 
+    	    android:id="@+id/nav_start" 
+    	    android:background="@null" 
+    	    android:paddingLeft="12.0dip" 
+    	    android:focusable="false" 
+    	    android:layout_width="fill_parent" 
+    	    android:layout_height="46.0dip" 
+    	    android:hint="输入起点..." 
+    	    android:singleLine="true" 
+    	    android:selectAllOnFocus="true" 
+    	    android:maxLength="100" 
+    	    android:editable="false" 
+    	    android:drawableLeft="@drawable/nav_route_result_start_point" 
+    	    android:drawablePadding="10.0dip" 
+    	    android:layout_toRightOf="@id/imagebtn_navsearch_switch" 
+    	    android:layout_alignParentTop="true" 
+    	    android:layout_alignParentRight="true" 
+    	    android:inputType="none" 
+    	    android:imeOptions="actionNext" />
+    	<View 
+    	    android:background="#ffd7d8d9" 
+    	    android:layout_width="fill_parent" 
+    	    android:layout_height="0.5dip" 
+    	    android:layout_marginLeft="13.0dip" 
+    	    android:layout_marginRight="15.0dip" 
+    	    android:layout_toRightOf="@id/imagebtn_navsearch_switch" 
+    	    android:layout_centerVertical="true" />
+    	<EditText 
+    	    android:textSize="17.0sp" 
+    	    android:textColorHint="#ffbfbfbf" 
+    	    android:gravity="center_vertical" 
+    	    android:id="@+id/nav_end" 
+    	    android:background="@null" 
+    	    android:paddingLeft="12.0dip" 
+    	    android:focusable="false" 
+    	    android:layout_width="fill_parent" 
+    	    android:layout_height="46.0dip" 
+    	    android:layout_marginTop="2dip" 
+    	    android:hint="输入终点..." 
+    	    android:singleLine="true" 
+    	    android:selectAllOnFocus="true" 
+    	    android:editable="false" 
+    	    android:drawableLeft="@drawable/nav_route_result_end_point" 
+    	    android:drawablePadding="10.0dip" 
+    	    android:layout_below="@id/nav_start" 
+    	    android:layout_alignLeft="@id/nav_start" 
+    	    android:inputType="none" 
+    	    android:imeOptions="actionGo" />
+	</RelativeLayout>
+	<TextView 
+	    android:text="注：仅支持南京本地路线规划，外地省市将无结果显示"
+	    android:textSize="14sp"
+    	android:layout_marginLeft="10dip"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content" />
+</LinearLayout>

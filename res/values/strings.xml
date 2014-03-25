@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">南京公交</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="about">
+        南京公交--手机上的实时公交电子站牌。\n\n无论何时何地，用户通过手机，就可查询到要乘坐的公交车的实时位置、实时到站、实时离站等信息，之后将逐步添加到站提醒、路线查询与规划等新功能。\n\n本产品致力于节约市民的日常出行时间，为广大南京市民及公交乘客提供方便快捷的出行服务，也为城市智能交通及无线城市建设起到了添砖加瓦的作用。...\n\n在此鸣谢 -Porsche 在技术上的支持以及 誓死要做高端黑 在设计、使用中得宝贵意见，没有你们，就没有这款app
+    </string>
+
+</resources>

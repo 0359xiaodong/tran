@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/main_bg" >
+    <include 
+        layout="@layout/view_title"/>
+    <RelativeLayout         
+        android:background="@android:color/white"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent">
+        <LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="vertical"
+		    android:background="@android:color/white">
+	        
+	    </LinearLayout>
+	    <LinearLayout 	        
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="vertical"
+		    android:background="#ededed">
+		    
+		    <LinearLayout 	        
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="vertical"
+		        android:paddingLeft="10dip"
+		        android:paddingRight="10dip"
+		        android:paddingTop="10dip"
+			    android:background="#ededed">		        
+		        <include 
+			        layout="@layout/view_navigation_map"/>
+		    </LinearLayout>
+		    <ListView 
+		        android:id="@+id/searchbynavigationdetail_listview"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		    	android:layout_margin="10dip"
+		        android:cacheColorHint="#00000000"
+		        android:background="@android:color/white"
+			    android:divider="@android:color/transparent"
+			    android:dividerHeight="0dip"
+		        android:scrollbars="none"
+		        android:fastScrollEnabled="true">
+	        
+	    	</ListView>
+	    </LinearLayout>	    
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="normal_station_color">#50335e</color>
+    <color name="after_station_color">#9c9c9c</color>
+    <color name="tabchoice_checked">#e84c3d</color>
+    <color name="tabchoice_normal">#ee675b</color>
+</resources>
