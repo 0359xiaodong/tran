@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,18 +55,24 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 	LinearLayout line_left=null;
 	TextView title_name=null;
 	ImageView title_left=null;
+	LinearLayout line_right=null;
+	TextView title_right=null;
+	ProgressBar title_pb=null;
 	
 	private ViewPager navigation_mapsearch_viewpager=null;
 	PagerAdapter adapter=null;
 	private MapView navigation_mapsearchview;
 	private AMap aMap;
+	LinearLayout navigation_mapsearch_indicator=null;
 	RouteSearch routeSearch=null;
 	ArrayList<View> views=null;
+	ArrayList<ImageView> image_views=null;
 	
 	//查询结果
 	BusRouteResult result_=null;
 	//规划集合
 	LinkedList<BusPath> busPaths=null;
+	boolean isLoading=false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +85,7 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 		setContentView(R.layout.activiity_searchbynavigation);
 		
 		views=new ArrayList<View>();
+		image_views=new ArrayList<ImageView>();
 		busPaths=new LinkedList<BusPath>();
 		
 		init(savedInstanceState);
@@ -98,7 +106,23 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 				// TODO Auto-generated method stub
 				finish();
 			}});
+		title_right=(TextView) findViewById(R.id.title_right);
+		title_right.setText("刷新");
+		title_right.setOnClickListener(new TextView.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(!isLoading) {
+					searchRouteResult();
+				}				
+			}});
+		title_right.setVisibility(View.VISIBLE);
+		line_right=(LinearLayout) findViewById(R.id.line_right);
+		line_right.setVisibility(View.VISIBLE);
+		title_pb=(ProgressBar) findViewById(R.id.title_pb);
 		
+		navigation_mapsearch_indicator=(LinearLayout) findViewById(R.id.navigation_mapsearch_indicator);
 		navigation_mapsearch_viewpager=(ViewPager) findViewById(R.id.navigation_mapsearch_viewpager);
 		adapter=new PagerAdapter() {
 			
@@ -128,6 +152,11 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 				View view=views.get(position);
 				((ViewPager) container).removeView(view);
 			}
+			
+			@Override  
+			public int getItemPosition(Object object) {  
+				return POSITION_NONE;  
+			}
 		};
 		navigation_mapsearch_viewpager.setAdapter(adapter);
 		navigation_mapsearch_viewpager.setOnPageChangeListener(new OnPageChangeListener() {
@@ -137,6 +166,14 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 				// TODO Auto-generated method stub
 				BusPath busPath=busPaths.get(arg0);
 				showMapRoute(result_, busPath);
+				for(int i=0;i<image_views.size();i++) {
+					if(i==arg0) {
+						image_views.get(i).setImageResource(R.drawable.jiaodian);
+					}
+					else {
+						image_views.get(i).setImageResource(R.drawable.jiaodian_white);
+					}
+				}
 			}
 			
 			@Override
@@ -150,6 +187,7 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 				// TODO Auto-generated method stub
 				
 			}
+			
 		});
 		navigation_mapsearchview=(MapView) findViewById(R.id.navigation_mapsearchview);
 		navigation_mapsearchview.onCreate(savedInstanceState);
@@ -168,6 +206,8 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 	}
 	
 	private void searchRouteResult() {
+		isLoading=true;
+		title_pb.setVisibility(View.VISIBLE);
 		String start=getIntent().getExtras().getString("start");
 		String end=getIntent().getExtras().getString("end");
 		RouteSearch.FromAndTo fromAndTo=new RouteSearch.FromAndTo(new LatLonPoint(Double.parseDouble(start.split("&")[0]), Double.parseDouble(start.split("&")[1])), 
@@ -209,8 +249,13 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 	@Override
 	public void onBusRouteSearched(BusRouteResult result, int rCode) {
 		// TODO Auto-generated method stub
+		title_pb.setVisibility(View.INVISIBLE);
+		isLoading=false;
 		if(rCode==0) {
 			if(result!=null&&result.getPaths()!=null&&result.getPaths().size()>0) {
+				navigation_mapsearch_indicator.removeAllViews();
+				image_views.clear();
+				views.clear();
 				for(int i=0;i<result.getPaths().size();i++) {
 					String title="";
 					BusPath busPath=result.getPaths().get(i);
@@ -219,7 +264,6 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 						showMapRoute(result_, busPath);
 					}
 					busPaths.add(busPath);
-					final int pos=i;
 					for(int j=0;j<busPath.getSteps().size();j++) {
 						BusStep step=busPath.getSteps().get(j);
 						if(step.getBusLine()!=null) {
@@ -231,10 +275,30 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 							}											
 						}
 					}
+					LayoutParams params=new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);				
+					ImageView image=new ImageView(SearchByNavigationActivity.this);
+					image.setPadding(3, 3, 3, 3);
+					if(i==0) {
+						image.setImageResource(R.drawable.jiaodian);
+					}
+					else {
+						image.setImageResource(R.drawable.jiaodian_white);
+					}
+					navigation_mapsearch_indicator.addView(image, params);
+					image_views.add(image);
 					views.add(loadNavigationMapView(title, busPath));
 				}
 				adapter.notifyDataSetChanged();
+				if(views.size()>0) {
+					navigation_mapsearch_viewpager.setCurrentItem(0);
+				}				
 			}
+			else {
+				Toast.makeText(SearchByNavigationActivity.this, "暂未搜索到相关信息", 3000).show();
+			}
+		}
+		else {
+			Toast.makeText(SearchByNavigationActivity.this, "暂未搜索到相关信息", 3000).show();
 		}
 	}
 	
@@ -260,7 +324,7 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 					
 					if(step.getBusLine()!=null) {
 						System.out.println(step.getBusLine().getBusLineName()+" "+step.getBusLine().getDepartureBusStation().getBusStationName()+" "+step.getBusLine().getArrivalBusStation().getBusStationName());
-						str_route.add("2&乘坐"+step.getBusLine().getBusLineName()+"在"+step.getBusLine().getDepartureBusStation().getBusStationName()+"站上车，经过"+step.getBusLine().getPassStationNum()+"站，至"+step.getBusLine().getArrivalBusStation().getBusStationName()+"站下车");
+						str_route.add("2&乘坐"+step.getBusLine().getBusLineName()+"在"+step.getBusLine().getDepartureBusStation().getBusStationName()+"站上车，经过"+(step.getBusLine().getPassStationNum()+1)+"站，至"+step.getBusLine().getArrivalBusStation().getBusStationName()+"站下车");
 					}
 				}
 				Intent intent=new Intent(SearchByNavigationActivity.this, SearchByNavigationDetailActivity.class);
@@ -290,7 +354,7 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 				LayoutParams params=new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				params.topMargin=3;
 				TextView textview=new TextView(SearchByNavigationActivity.this);
-				textview.setText(Html.fromHtml("乘坐<font color='red'>"+step.getBusLine().getBusLineName()+"</font><br>在<font color='blue'>"+step.getBusLine().getDepartureBusStation().getBusStationName()+"</font>站上车，经过<font color='blue'>"+step.getBusLine().getPassStationNum()+"</font>站，至<font color='blue'>"+step.getBusLine().getArrivalBusStation().getBusStationName()+"</font>站下车"));
+				textview.setText(Html.fromHtml("乘坐<font color='red'>"+step.getBusLine().getBusLineName()+"</font><br>在<font color='blue'>"+step.getBusLine().getDepartureBusStation().getBusStationName()+"</font>站上车，经过<font color='blue'>"+(step.getBusLine().getPassStationNum()+1)+"</font>站，至<font color='blue'>"+step.getBusLine().getArrivalBusStation().getBusStationName()+"</font>站下车"));
 				textview.setTextColor(Color.GRAY);
 				textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 				final String name=step.getBusLine().getBusLineName();

@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -36,6 +37,9 @@ public class SearchPoiActivity extends Activity implements OnPoiSearchListener {
 	LinearLayout line_left=null;
 	TextView title_name=null;
 	ImageView title_left=null;
+	LinearLayout line_right=null;
+	TextView title_right=null;
+	ProgressBar title_pb=null;
 	
 	EditText searchpoi_edit=null;
 	ListView searchpoi_listview=null;
@@ -46,6 +50,7 @@ public class SearchPoiActivity extends Activity implements OnPoiSearchListener {
 	String currentSearchKey="";
 	//当前查询关键字
 	String currentFindKey="";
+	boolean isSearching=false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,21 @@ public class SearchPoiActivity extends Activity implements OnPoiSearchListener {
 				// TODO Auto-generated method stub
 				finish();
 			}});
+		title_right=(TextView) findViewById(R.id.title_right);
+		title_right.setOnClickListener(new TextView.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(!isSearching) {
+					searchResult(searchpoi_edit.getText().toString());
+				}				
+			}});
+		title_right.setText("提交");
+		title_right.setVisibility(View.VISIBLE);
+		line_right=(LinearLayout) findViewById(R.id.line_right);
+		line_right.setVisibility(View.VISIBLE);
+		title_pb=(ProgressBar) findViewById(R.id.title_pb);
 		
 		searchpoi_listview=(ListView) findViewById(R.id.searchpoi_listview);
 		adapter=new SimpleAdapter(SearchPoiActivity.this, lists, R.layout.adapter_searchpoi, new String[]{"name"}, new int[]{R.id.search_poi_text});
@@ -126,6 +146,8 @@ public class SearchPoiActivity extends Activity implements OnPoiSearchListener {
 	};
 
 	private void searchResult(String str) {
+		title_pb.setVisibility(View.VISIBLE);
+		isSearching=true;
 		currentFindKey=str;
 		searchQuery=new PoiSearch.Query(str, "", "025");
 		searchQuery.setPageNum(0);
@@ -156,7 +178,8 @@ public class SearchPoiActivity extends Activity implements OnPoiSearchListener {
 				}
 			}
 		}
-		System.out.println("查询完成");
+		isSearching=false;
+		title_pb.setVisibility(View.INVISIBLE);
 		adapter.notifyDataSetChanged();
 		//允许用户多次输入，搜索最后一次输入的信息
 		if(!currentFindKey.equals(currentSearchKey)) {
