@@ -1,6 +1,7 @@
 package com.renyu.nj_tran.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.renyu.nj_tran.R;
 import com.renyu.nj_tran.TranApplication;
@@ -22,6 +23,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,9 +32,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
@@ -48,6 +54,9 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 	PagerAdapter adapter=null;
 	PagerTabStrip search_viewpager_strip=null;
 	EditText icon_search_edit=null;
+	ListView icon_search_listview=null;
+	SimpleAdapter result_adapter=null;
+	ArrayList<HashMap<String, Object>> lists=null;
 	
 	TextView nav_start=null;
 	TextView nav_end=null;
@@ -71,6 +80,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		if(view==null) {
+			lists=new ArrayList<HashMap<String, Object>>();			
 			views=new ArrayList<View>();
 			
 			view=LayoutInflater.from(getActivity()).inflate(R.layout.fragment_search, null);
@@ -197,6 +207,10 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 			view=LayoutInflater.from(getActivity()).inflate(R.layout.view_search, null);
 			icon_search_edit=(EditText) view.findViewById(R.id.icon_search_edit);
 			icon_search_edit.setOnEditorActionListener(this);
+			icon_search_edit.addTextChangedListener(tw);
+			icon_search_listview=(ListView) view.findViewById(R.id.icon_search_listview);
+			result_adapter=new SimpleAdapter(getActivity(), lists, R.layout.adapter_searchpoi, new String[]{"name"}, new int[]{R.id.search_poi_text});
+			icon_search_listview.setAdapter(result_adapter);
 			break;
 		case 1:
 			view=LayoutInflater.from(getActivity()).inflate(R.layout.view_navigation, null);
@@ -358,4 +372,108 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 		intent.putExtras(bundle);
 		getActivity().startActivity(intent);
 	}
+	
+	TextWatcher tw=new TextWatcher() {
+		
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void afterTextChanged(Editable s) {
+			// TODO Auto-generated method stub
+			if(!s.toString().equals("")) {
+				lists.clear();
+				//判断是不是都是数字，如果都是数字，则为查询线路
+				if(CommonUtils.isNumeric(s.toString())) {					
+					final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(getActivity()).getTranInfo(s.toString()+"路");					
+					String[] array=new String[busLineModelList.size()];
+					for(int i=0;i<busLineModelList.size();i++) {
+						HashMap<String, Object> map=new HashMap<String, Object>();
+						array[i]=busLineModelList.get(i).getLine_name()+" "+busLineModelList.get(i).getStart_from()+"-->"+busLineModelList.get(i).getEnd_location();
+						map.put("name", array[i]);
+						lists.add(map);
+					}
+					icon_search_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+						@Override
+						public void onItemClick(AdapterView<?> parent,
+								View view, int position, long id) {
+							// TODO Auto-generated method stub
+							Intent intent=new Intent(getActivity(), ResultActivity.class);
+							Bundle bundle=new Bundle();
+							bundle.putString("lineName", busLineModelList.get(position).getLine_name());
+							bundle.putString("stationName", "");
+							bundle.putInt("lineId", busLineModelList.get(position).getId());
+							intent.putExtras(bundle);
+							getActivity().startActivity(intent);
+						}
+					});
+				}
+				//判断是不是含有数字，如果是，则为包含“路”字的查询线路
+				else if(CommonUtils.isContainNumeric(s.toString())) {
+					final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(getActivity()).getTranInfo(s.toString());					
+					String[] array=new String[busLineModelList.size()];
+					for(int i=0;i<busLineModelList.size();i++) {
+						HashMap<String, Object> map=new HashMap<String, Object>();
+						array[i]=busLineModelList.get(i).getLine_name()+" "+busLineModelList.get(i).getStart_from()+"-->"+busLineModelList.get(i).getEnd_location();
+						map.put("name", array[i]);
+						lists.add(map);
+					}
+					icon_search_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+						@Override
+						public void onItemClick(AdapterView<?> parent,
+								View view, int position, long id) {
+							// TODO Auto-generated method stub
+							Intent intent=new Intent(getActivity(), ResultActivity.class);
+							Bundle bundle=new Bundle();
+							bundle.putString("lineName", busLineModelList.get(position).getLine_name());
+							bundle.putString("stationName", "");
+							bundle.putInt("lineId", busLineModelList.get(position).getId());
+							intent.putExtras(bundle);
+							getActivity().startActivity(intent);
+						}
+					});
+				}
+				//如果不含数字，那就是在查询站点
+				else {
+					final ArrayList<StationsModel> modelListStation=Conn.getInstance(getActivity()).getStationInfo(s.toString());
+					String array[]=new String[modelListStation.size()];
+					for(int i=0;i<modelListStation.size();i++) {
+						HashMap<String, Object> map=new HashMap<String, Object>();
+						array[i]=modelListStation.get(i).getStation_name();
+						map.put("name", array[i]);
+						lists.add(map);
+					}
+					icon_search_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+						@Override
+						public void onItemClick(AdapterView<?> parent,
+								View view, int position, long id) {
+							// TODO Auto-generated method stub
+							Intent intent=new Intent(getActivity(), SearchByStationNameActivity.class);
+							Bundle bundle=new Bundle();
+							bundle.putString("sid", ""+modelListStation.get(position).getId());
+							bundle.putString("stationName", ""+modelListStation.get(position).getStation_name());
+							bundle.putDouble("lat", modelListStation.get(position).getMap_station_lat());
+							bundle.putDouble("long", modelListStation.get(position).getMap_station_long());
+							intent.putExtras(bundle);
+							getActivity().startActivity(intent);
+						}
+					});					
+				}
+				result_adapter.notifyDataSetChanged();
+			}
+		}
+	};
 }
