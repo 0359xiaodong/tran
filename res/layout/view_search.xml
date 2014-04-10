@@ -1,54 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical" >
-    <RelativeLayout 
-        android:background="@drawable/item_line_bg"
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_marginLeft="10dip"
-    	android:layout_marginRight="10dip"
-    	android:layout_marginTop="20dip"
-    	android:layout_marginBottom="20dip"
-    	android:padding="10dip">
-        <ImageView 
-            android:id="@+id/icon_search"
-            android:src="@drawable/icon_search"
-            android:layout_centerVertical="true"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"/> 
-        <EditText 
-            android:id="@+id/icon_search_edit"
-    	    android:textSize="17.0sp" 
-    	    android:hint="搜索"
-    	    android:textColorHint="#ffbfbfbf" 
-            android:textColor="#50335e"
-            android:inputType="text"
-            android:imeOptions="actionSearch"
-            android:background="@null"
-            android:layout_toRightOf="@id/icon_search"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-    		android:layout_width="fill_parent"
-    		android:layout_height="wrap_content" />       
-    </RelativeLayout>
-	<TextView 
-	    android:text="注：可查询公交线路或者站点"
-	    android:textSize="14sp"
-    	android:layout_marginLeft="10dip"
-   		android:layout_width="fill_parent"
-   		android:layout_height="wrap_content" />	
-    <ListView 
-        android:id="@+id/icon_search_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-    	android:layout_margin="10dip"
-        android:cacheColorHint="#00000000"
-        android:scrollbars="none"
-        android:fastScrollEnabled="true">
-        
-    </ListView>
-</LinearLayout>
+    <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical" >
+	    <RelativeLayout 
+	        android:background="@drawable/item_line_bg"
+	    	android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginLeft="10dip"
+	    	android:layout_marginRight="10dip"
+	    	android:layout_marginTop="20dip"
+	    	android:layout_marginBottom="20dip"
+	    	android:padding="10dip">
+	        <ImageView 
+	            android:id="@+id/icon_search"
+	            android:src="@drawable/icon_search"
+	            android:layout_centerVertical="true"
+	    		android:layout_width="wrap_content"
+	    		android:layout_height="wrap_content"/> 
+	   		<ImageView
+	            android:id="@+id/icon_search_voice"
+	            android:layout_width="40dip"
+	            android:layout_height="40dip"
+	            android:layout_centerVertical="true"
+	            android:layout_alignParentRight="true"
+	            android:src="@drawable/recoggray" /> 
+	        <EditText 
+	            android:id="@+id/icon_search_edit"
+	            android:layout_toLeftOf="@id/icon_search_voice"
+	            android:layout_toRightOf="@id/icon_search"
+	    	    android:textSize="17.0sp" 
+	    	    android:hint="搜索"
+	    	    android:textColorHint="#ffbfbfbf" 
+	            android:textColor="#50335e"
+	            android:inputType="text"
+	            android:imeOptions="actionSearch"
+	            android:background="@null"
+	            android:layout_centerVertical="true"
+	            android:layout_marginLeft="10dip"
+	            android:layout_marginRight="10dip"
+	    		android:layout_width="fill_parent"
+	    		android:layout_height="wrap_content" />      
+	    </RelativeLayout>
+		<TextView 
+		    android:text="注：可查询公交线路或者站点"
+		    android:textSize="14sp"
+	    	android:layout_marginLeft="10dip"
+	   		android:layout_width="fill_parent"
+	   		android:layout_height="wrap_content" />	
+	    <ListView 
+	        android:id="@+id/icon_search_listview"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	    	android:layout_margin="10dip"
+	        android:cacheColorHint="#00000000"
+	        android:scrollbars="none"
+	        android:fastScrollEnabled="true">
+	        
+	    </ListView>
+	</LinearLayout>
+	<RelativeLayout 
+	    android:id="@+id/icon_search_voicenum_layout"
+	    android:layout_width="200dip"
+	    android:layout_height="200dip"
+	    android:visibility="gone"
+    	android:layout_centerInParent="true">
+	    <RelativeLayout 
+	        android:background="@android:color/black"
+	        android:alpha="0.4"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent">
+	        
+	    </RelativeLayout>
+	    <ImageView 
+	        android:id="@+id/icon_search_voicenum"
+	        android:src="@drawable/recog001"
+	    	android:layout_centerInParent="true"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"/>
+	</RelativeLayout>
+</RelativeLayout>

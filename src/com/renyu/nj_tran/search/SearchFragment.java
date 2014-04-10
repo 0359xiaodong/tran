@@ -2,7 +2,14 @@ package com.renyu.nj_tran.search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import com.qq.wx.voice.recognizer.VoiceRecognizer;
+import com.qq.wx.voice.recognizer.VoiceRecognizerListener;
+import com.qq.wx.voice.recognizer.VoiceRecognizerResult;
+import com.qq.wx.voice.recognizer.VoiceRecordState;
+import com.qq.wx.voice.recognizer.VoiceRecognizerResult.Word;
 import com.renyu.nj_tran.R;
 import com.renyu.nj_tran.TranApplication;
 import com.renyu.nj_tran.busresult.ResultActivity;
@@ -18,6 +25,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
@@ -37,12 +46,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
-public class SearchFragment extends Fragment implements OnEditorActionListener {
+public class SearchFragment extends Fragment implements OnEditorActionListener, VoiceRecognizerListener {
 	
 	View view=null;
 	
@@ -53,6 +63,9 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 	ViewPager search_viewpager=null;
 	PagerAdapter adapter=null;
 	PagerTabStrip search_viewpager_strip=null;
+	ImageView icon_search_voice=null;
+	RelativeLayout icon_search_voicenum_layout=null;
+	ImageView icon_search_voicenum=null;
 	EditText icon_search_edit=null;
 	ListView icon_search_listview=null;
 	SimpleAdapter result_adapter=null;
@@ -69,6 +82,9 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 	//当前位置
 	int current_pos=0;
 
+	//表示目前所处的状态 0:空闲状态，可进行识别； 1：正在进行录音; 2：处于语音识别; 3：处于取消状态
+	private int mRecoState = 0;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -96,7 +112,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 					// TODO Auto-generated method stub
 					if(current_pos==0) {
 						if(icon_search_edit.getText().toString().equals("")||icon_search_edit.getText().toString().equals("路")) {
-							Toast.makeText(getActivity(), "请您输入正确的查询数据", 3000).show();
+							Toast.makeText(getActivity(), "请您输入正确的查询数据", 2000).show();
 							return;
 						}
 						loadDBData(icon_search_edit.getText().toString());
@@ -205,6 +221,36 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 		switch(pos) {
 		case 0:
 			view=LayoutInflater.from(getActivity()).inflate(R.layout.view_search, null);
+			icon_search_voicenum_layout=(RelativeLayout) view.findViewById(R.id.icon_search_voicenum_layout);
+			icon_search_voicenum=(ImageView) view.findViewById(R.id.icon_search_voicenum);
+			icon_search_voice=(ImageView) view.findViewById(R.id.icon_search_voice);
+			icon_search_voice.setOnClickListener(new ImageView.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					//判断当前是否调用语音
+					if(mRecoState==0) {
+						VoiceRecognizer.shareInstance().setSilentTime(1000);
+						VoiceRecognizer.shareInstance().setListener(SearchFragment.this);						
+						int result=VoiceRecognizer.shareInstance().init(getActivity(), "1e005feff384d776f0ddbbec76a20576948524f0b795d8cf");
+						if(result!=0) {
+							Toast.makeText(getActivity(), "语音引擎初始化失败", 2000).show();
+						}
+						else {
+							if(0==VoiceRecognizer.shareInstance().start()) {
+								mRecoState=1;
+								icon_search_voicenum_layout.setVisibility(View.VISIBLE);
+							}
+							else {
+								Toast.makeText(getActivity(), "语音引擎启动失败", 2000).show();
+							}
+						}
+					}
+					else if(mRecoState==1) {
+						VoiceRecognizer.shareInstance().stop();
+					}
+				}});
 			icon_search_edit=(EditText) view.findViewById(R.id.icon_search_edit);
 			icon_search_edit.setOnEditorActionListener(this);
 			icon_search_edit.addTextChangedListener(tw);
@@ -269,7 +315,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 			InputMethodManager imm=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(icon_search_edit.getWindowToken(), 0); 
 			if(icon_search_edit.getText().toString().equals("")||icon_search_edit.getText().toString().equals("路")) {
-				Toast.makeText(getActivity(), "请您输入正确的查询数据", 3000).show();
+				Toast.makeText(getActivity(), "请您输入正确的查询数据", 2000).show();
 				return false;
 			}
 			loadDBData(icon_search_edit.getText().toString());
@@ -476,4 +522,160 @@ public class SearchFragment extends Fragment implements OnEditorActionListener {
 			}
 		}
 	};
+
+	@Override
+	public void onGetError(int errorCode) {
+		// TODO Auto-generated method stub
+		cancelTask();
+	}
+
+	@Override
+	public void onGetResult(VoiceRecognizerResult result) {
+		// TODO Auto-generated method stub
+		cancelTask();
+		if(result!=null&&result.words!=null) {
+			int wordSize=result.words.size();
+			StringBuilder results=new StringBuilder();
+			for (int i=0;i<wordSize;++i) {
+				Word word=(Word) result.words.get(i);
+				if (word!=null&&word.text!=null) {
+					results.append(word.text.replace(" ", ""));
+				}
+			}
+			icon_search_edit.setText(results.toString());
+		}
+		mRecoState=0;
+	}
+
+	@Override
+	public void onGetVoiceRecordState(VoiceRecordState state) {
+		// TODO Auto-generated method stub
+		if (state == VoiceRecordState.Start) {
+			Toast.makeText(getActivity(), "语音已开启，请说话…", 2000).show();
+		} else if (state == VoiceRecordState.Complete) {
+			Toast.makeText(getActivity(), "识别中...", 2000).show();
+			mRecoState=2;
+			startTask();
+		} else if (state == VoiceRecordState.Canceling) {
+			mRecoState=3;
+			Toast.makeText(getActivity(), "正在取消", 2000).show();
+		} else if (state == VoiceRecordState.Canceled) {
+			Toast.makeText(getActivity(), "点击开始说话", 2000).show();
+			mRecoState=0;
+		}
+	}
+
+	private final int mMicNum=8;
+	@Override
+	public void onVolumeChanged(int volume) {
+		// TODO Auto-generated method stub
+		int index=volume;
+		if (index<0) {
+			index=0;
+		} else if (index>=mMicNum) {
+			index=mMicNum-1;
+		}
+		if (1==mRecoState) {
+			switch (index) {
+			case 0:
+				icon_search_voicenum.setImageResource(R.drawable.recog001);
+				break;
+			case 1:
+				icon_search_voicenum.setImageResource(R.drawable.recog002);
+				break;
+			case 2:
+				icon_search_voicenum.setImageResource(R.drawable.recog003);
+				break;
+			case 3:
+				icon_search_voicenum.setImageResource(R.drawable.recog004);
+				break;
+			case 4:
+				icon_search_voicenum.setImageResource(R.drawable.recog005);
+				break;
+			case 5:
+				icon_search_voicenum.setImageResource(R.drawable.recog006);
+				break;
+			case 6:
+				icon_search_voicenum.setImageResource(R.drawable.recog007);
+				break;
+			case 7:
+				icon_search_voicenum.setImageResource(R.drawable.recog008);
+				break;
+			default:
+				icon_search_voicenum.setImageResource(R.drawable.recogstart);
+			}
+		}
+	
+	}
+	
+	private Handler refresh_handler=new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			super.handleMessage(msg);
+			System.out.println(msg.what);
+			switch(msg.what&7) {
+			case 0:
+				icon_search_voicenum.setImageResource(R.drawable.recowait001);
+				break;
+			case 1:
+				icon_search_voicenum.setImageResource(R.drawable.recowait002);
+				break;
+			case 2:
+				icon_search_voicenum.setImageResource(R.drawable.recowait003);
+				break;
+			case 3:
+				icon_search_voicenum.setImageResource(R.drawable.recowait004);
+				break;
+			case 4:
+				icon_search_voicenum.setImageResource(R.drawable.recowait005);
+				break;
+			case 5:
+				icon_search_voicenum.setImageResource(R.drawable.recowait006);
+				break;
+			case 6:
+				icon_search_voicenum.setImageResource(R.drawable.recowait007);
+				break;
+			default:
+				icon_search_voicenum.setImageResource(R.drawable.recogstart);
+			}
+		}
+	};
+	
+	int btnIndex=0;
+	Timer frameTimer=null;
+	TimerTask frameTask=null;
+	private void startTask() {
+		frameTimer=new Timer(false);
+		frameTask=new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Message m=new Message();
+				m.what=btnIndex;
+				refresh_handler.sendMessage(m);
+				btnIndex++;
+			}
+		};
+		frameTimer.schedule(frameTask, 200, 100);
+	}
+	
+	private void cancelTask() {
+		icon_search_voicenum_layout.setVisibility(View.GONE);
+		icon_search_voicenum.setImageResource(R.drawable.recogstart);
+		if(frameTimer!=null) {
+			frameTimer.cancel();
+		}
+		if(frameTask!=null) {
+			frameTask.cancel();
+		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		VoiceRecognizer.shareInstance().destroy();
+	}
 }
