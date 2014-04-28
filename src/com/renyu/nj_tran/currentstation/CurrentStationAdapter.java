@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.renyu.nj_tran.R;
 import com.renyu.nj_tran.busresult.ResultActivity;
+import com.renyu.nj_tran.busresult.ResultJnActivity;
 import com.renyu.nj_tran.commons.CommonUtils;
 import com.renyu.nj_tran.commons.Conn;
 import com.renyu.nj_tran.model.ArroundStationModel;
@@ -85,21 +86,47 @@ public class CurrentStationAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(context.getApplicationContext()).getTranInfo(modelLists.get(pos_).getLids_list().get(k));
+					ArrayList<BusLineModel> busLineModelList=null;
+					if(CommonUtils.isJnFromNJDB(modelLists.get(pos_).getLids_list().get(k))!=null) {
+						String result=CommonUtils.isJnFromNJDB(modelLists.get(pos_).getLids_list().get(k));
+						busLineModelList=Conn.getInstance(context.getApplicationContext()).getJNTranInfoDirect(result, true);
+					}
+					else {
+						busLineModelList=Conn.getInstance(context.getApplicationContext()).getTranInfoDirect(modelLists.get(pos_).getLids_list().get(k), true);
+					}	
 					String[] array=new String[busLineModelList.size()];
 					for(int i=0;i<busLineModelList.size();i++) {
 						array[i]=busLineModelList.get(i).getLine_name()+" "+busLineModelList.get(i).getStart_from()+"-->"+busLineModelList.get(i).getEnd_location();
 					}
+					final ArrayList<BusLineModel> busLineModelListTemp=busLineModelList;
 					new AlertDialog.Builder(context).setTitle("请您选择该车次线路").setItems(array, new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
-							Intent intent=new Intent(context, ResultActivity.class);
+							Intent intent=null;
 							Bundle bundle=new Bundle();
-							bundle.putString("lineName", busLineModelList.get(which).getLine_name());
-							bundle.putString("stationName", modelLists.get(pos_).getName());
-							bundle.putInt("lineId", busLineModelList.get(which).getId());
+							if(CommonUtils.isJnFromNJDB(modelLists.get(pos_).getLids_list().get(k))!=null) {
+								intent=new Intent(context, ResultJnActivity.class);
+								bundle.putString("lineName", busLineModelListTemp.get(which).getLine_name());
+								if(modelLists.get(pos_).getName().indexOf("[")!=-1) {
+									bundle.putString("stationName", modelLists.get(pos_).getName().substring(0, modelLists.get(pos_).getName().indexOf("[")));
+								}
+								else if(modelLists.get(pos_).getName().indexOf("(")!=-1) {
+									bundle.putString("stationName", modelLists.get(pos_).getName().substring(0, modelLists.get(pos_).getName().indexOf("(")));	
+								}
+								else {
+									bundle.putString("stationName", modelLists.get(pos_).getName());
+								}
+								bundle.putInt("lineId", busLineModelListTemp.get(which).getId());
+								bundle.putString("inDown", busLineModelListTemp.get(which).getLine_code());								
+							}
+							else {
+								intent=new Intent(context, ResultActivity.class);
+								bundle.putString("lineName", busLineModelListTemp.get(which).getLine_name());
+								bundle.putString("stationName", modelLists.get(pos_).getName());
+								bundle.putInt("lineId", busLineModelListTemp.get(which).getId());
+							}
 							intent.putExtras(bundle);
 							context.startActivity(intent);
 						}}).show();

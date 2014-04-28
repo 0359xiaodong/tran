@@ -220,9 +220,9 @@ public class ResultActivity extends Activity implements OnRefreshListener {
 			@Override
 			public void handleMessage(Message msg) {
 				// TODO Auto-generated method stub
+				super.handleMessage(msg);
 				title_pb.setVisibility(View.INVISIBLE);
 				if(msg.obj!=null) {
-					super.handleMessage(msg);
 					modelListBus.clear();
 					modelListBus.addAll(JsonParse.getCurrentBusList(msg.obj.toString()));
 					adapter.notifyDataSetChanged();

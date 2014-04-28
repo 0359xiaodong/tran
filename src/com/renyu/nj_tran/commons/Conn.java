@@ -54,12 +54,18 @@ public class Conn extends SQLiteOpenHelper {
 	 * 根据路线获取公交线路信息
 	 * @param lineName
 	 */
-	public ArrayList<BusLineModel> getTranInfo(String lineName) {
+	public ArrayList<BusLineModel> getTranInfoDirect(String lineName, boolean isDirect) {
 		synchronized (this) {
 			ArrayList<BusLineModel> modelList=new ArrayList<BusLineModel>();
 			File file=new File("/data/data/"+context.getPackageName()+"/iso2014.db");
 			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
-			Cursor cs=db.query("buslines", null, "line_name=?", new String[]{lineName}, null, null, null);
+			Cursor cs=null;
+			if(isDirect) {
+				cs=db.query("buslines", null, "line_name=?", new String[]{lineName}, null, null, null);
+			}
+			else {
+				cs=db.query("buslines", null, "line_name like '%"+lineName+"%'", new String[]{}, null, null, null);
+			}
 			cs.moveToFirst();
 			for(int i=0;i<cs.getCount();i++) {
 				cs.moveToPosition(i);
@@ -73,6 +79,45 @@ public class Conn extends SQLiteOpenHelper {
 				model.setStart_from(cs.getString(cs.getColumnIndex("start_from")));
 				model.setStart_time(cs.getString(cs.getColumnIndex("start_time")));
 				model.setId(cs.getInt(cs.getColumnIndex("id")));
+				modelList.add(model);
+			}
+			cs.close();
+			db.close();
+			return modelList;
+		}
+	}
+	
+	/**
+	 * 获取江宁公交线路信息
+	 * @param lineName
+	 * @param isDirect
+	 * @return
+	 */
+	public ArrayList<BusLineModel> getJNTranInfoDirect(String lineName, boolean isDirect) {
+		synchronized (this) {
+			ArrayList<BusLineModel> modelList=new ArrayList<BusLineModel>();
+			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
+			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
+			Cursor cs=null;
+			if(isDirect) {
+				cs=db.query("jndirection", null, "lineName=?", new String[]{lineName}, null, null, null);
+			}
+			else {
+				cs=db.query("jndirection", null, "lineName like '%"+lineName+"%'", new String[]{}, null, null, null);
+			}
+			cs.moveToFirst();
+			for(int i=0;i<cs.getCount();i++) {
+				cs.moveToPosition(i);
+				BusLineModel model=new BusLineModel();
+				model.setEnd_location(cs.getString(cs.getColumnIndex("eStation")));
+				model.setEnd_time(cs.getString(cs.getColumnIndex("eTime")));
+				model.setLine_code(cs.getString(cs.getColumnIndex("inDown")));
+				model.setLine_name(cs.getString(cs.getColumnIndex("lineName")));
+				model.setPath_info("");
+				model.setPiao("");
+				model.setStart_from(cs.getString(cs.getColumnIndex("sStation")));
+				model.setStart_time(cs.getString(cs.getColumnIndex("sTime")));
+				model.setId(cs.getInt(cs.getColumnIndex("lineId")));
 				modelList.add(model);
 			}
 			cs.close();
@@ -103,6 +148,36 @@ public class Conn extends SQLiteOpenHelper {
 				model.setStation_lat(cs.getDouble(cs.getColumnIndex("station_lat")));
 				model.setStation_long(cs.getDouble(cs.getColumnIndex("station_long")));
 				model.setStation_name(cs.getString(cs.getColumnIndex("station_name")));
+				modelList.add(model);
+			}
+			cs.close();
+			db.close();
+			return modelList;
+		}
+	}
+	
+	/**
+	 * 根据江宁公交站台获取站台信息
+	 * @param lineName
+	 */
+	public ArrayList<StationsModel> getJNStationInfo(String str) {
+		synchronized (this) {
+			ArrayList<StationsModel> modelList=new ArrayList<StationsModel>();
+			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
+			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
+			Cursor cs=db.rawQuery("select * from jnstation where station like '%"+str+"%'", new String[]{});
+			cs.moveToFirst();
+			for(int i=0;i<cs.getCount();i++) {
+				cs.moveToPosition(i);
+				StationsModel model=new StationsModel();
+				model.setGps_station_lat(cs.getDouble(cs.getColumnIndex("lat")));
+				model.setGps_station_long(cs.getDouble(cs.getColumnIndex("log")));
+				model.setId(cs.getInt(cs.getColumnIndex("lineId")));
+				model.setMap_station_lat(cs.getDouble(cs.getColumnIndex("lat")));
+				model.setMap_station_long(cs.getDouble(cs.getColumnIndex("log")));
+				model.setStation_lat(cs.getDouble(cs.getColumnIndex("lat")));
+				model.setStation_long(cs.getDouble(cs.getColumnIndex("log")));
+				model.setStation_name(cs.getString(cs.getColumnIndex("station")));
 				modelList.add(model);
 			}
 			cs.close();
@@ -210,6 +285,103 @@ public class Conn extends SQLiteOpenHelper {
 				db.close();
 				return -1;
 			}
+		}
+	}
+	
+	/**
+	 * 判断是否为江宁公交
+	 * @param lineName
+	 * @return
+	 */
+	public boolean isJN(String lineName) {
+		synchronized (this) {
+			boolean flag=false;
+			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
+			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
+			Cursor cs=db.query("jnbus", new String[]{"lineName"}, null, null, null, null, null);
+			cs.moveToFirst();
+			for(int i=0;i<cs.getCount();i++) {
+				cs.moveToPosition(i);
+				if(cs.getString(cs.getColumnIndex("lineName")).equals(lineName)) {
+					flag=true;
+					break;
+				}
+			}
+			cs.close();
+			db.close();
+			return flag;
+		}
+	}
+	
+	/**
+	 * 判断是否为江宁公交
+	 * @param lineName
+	 * @return
+	 */
+	public boolean isJN(int lineId) {
+		synchronized (this) {
+			boolean flag=false;
+			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
+			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
+			Cursor cs=db.query("jnbus", new String[]{"lineId"}, null, null, null, null, null);
+			cs.moveToFirst();
+			for(int i=0;i<cs.getCount();i++) {
+				cs.moveToPosition(i);
+				if(cs.getInt(cs.getColumnIndex("lineId"))==lineId) {
+					flag=true;
+					break;
+				}
+			}
+			cs.close();
+			db.close();
+			return flag;
+		}
+	}
+	
+	/**
+	 * 获取江宁公交车在本站位置
+	 * @param stationName
+	 * @param inDown
+	 * @return
+	 */
+	public int getStationId(String stationName, int inDown, int lineId) {
+		synchronized (this) {
+			int id=-1;
+			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
+			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
+			Cursor cs=db.query("jnstation", null, "station=? and inDown=? and lineId=?", new String[]{stationName, ""+inDown, ""+lineId}, null, null, null);
+			cs.moveToFirst();
+			if(cs.getCount()>0) {
+				cs.moveToPosition(0);
+				id=cs.getInt(cs.getColumnIndex("dicId"));
+			}
+			cs.close();
+			db.close();
+			return id;
+		}		
+	}
+	
+	/**
+	 * 获取本地站点信息
+	 * @param inDown
+	 * @param lineId
+	 * @return
+	 */
+	public LinkedList<StationByIdModel> getOfflineStationModel(int inDown, int lineId) {
+		synchronized (this) {
+			LinkedList<StationByIdModel> modelList=new LinkedList<StationByIdModel>();
+			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
+			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 
+			Cursor cs=db.query("jnstation", null, "inDown=? and lineId=?", new String[]{""+inDown, ""+lineId}, null, null, null);
+			cs.moveToFirst();
+			for(int i=0;i<cs.getCount();i++) {
+				cs.moveToPosition(i);
+				StationByIdModel model=new StationByIdModel();
+				model.setId(cs.getInt(cs.getColumnIndex("dicId")));
+				model.setName(cs.getString(cs.getColumnIndex("station")));
+				modelList.add(model);
+			}
+			return modelList;
 		}
 	}
 	

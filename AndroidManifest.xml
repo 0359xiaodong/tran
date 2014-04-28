@@ -78,7 +78,8 @@
         <activity android:name=".homepage.HomePageActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>
         <activity android:name=".currentstation.CurrentStationMapActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>
         <activity android:name=".busresult.ResultActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>
-    	<activity android:name=".search.SearchByStationNameActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>        
+        <activity android:name=".busresult.ResultJnActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>
+        <activity android:name=".search.SearchByStationNameActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>        
     	<activity android:name=".search.SearchByStationNameMapActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>        
     	<activity android:name=".search.SearchByRotateMapActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>        
     	<activity android:name=".search.SearchByNavigationActivity" android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden|navigation"></activity>        

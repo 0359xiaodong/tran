@@ -13,6 +13,7 @@ import com.qq.wx.voice.recognizer.VoiceRecognizerResult.Word;
 import com.renyu.nj_tran.R;
 import com.renyu.nj_tran.TranApplication;
 import com.renyu.nj_tran.busresult.ResultActivity;
+import com.renyu.nj_tran.busresult.ResultJnActivity;
 import com.renyu.nj_tran.commons.CommonUtils;
 import com.renyu.nj_tran.commons.Conn;
 import com.renyu.nj_tran.model.BusLineModel;
@@ -328,17 +329,47 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 	 * @param result
 	 */
 	private void loadDBData(String result) {
-		//判断是不是都是数字，如果都是数字，则为查询线路
+		//全数字直接精确查询线路
 		if(CommonUtils.isNumeric(result)) {
-			choiceBusLine(Conn.getInstance(getActivity()).getTranInfo(result+"路"));
+			//区分江宁与市区
+			if(Conn.getInstance(getActivity()).isJN(result)) {
+				choiceBusLine(Conn.getInstance(getActivity()).getJNTranInfoDirect(result, true));
+			}
+			else {
+				choiceBusLine(Conn.getInstance(getActivity()).getTranInfoDirect(result+"路", true));
+			}
 		}
-		//判断是不是含有数字，如果是，则为包含“路”字的查询线路
+		//含数字直接模糊查询线路
 		else if(CommonUtils.isContainNumeric(result)) {
-			choiceBusLine(Conn.getInstance(getActivity()).getTranInfo(result));
+			if(Conn.getInstance(getActivity()).isJN(result)) {
+				//如果江宁公交包含，则同样还需搜索一遍市区，以防止线路名称冲突
+				ArrayList<BusLineModel> busLineModels=new ArrayList<BusLineModel>();
+				busLineModels.addAll(Conn.getInstance(getActivity()).getJNTranInfoDirect(result, false));
+				busLineModels.addAll(Conn.getInstance(getActivity()).getTranInfoDirect(result, false));
+				choiceBusLine(busLineModels);
+			}
+			else {
+				choiceBusLine(Conn.getInstance(getActivity()).getTranInfoDirect(result, false));
+			}
 		}
-		//如果不含数字，那就是在查询站点
+		//如果不含数字，除部分线路以全汉字命名，其余都是在查询站点
 		else {
-			choiceStation(Conn.getInstance(getActivity()).getStationInfo(result));
+			//部分江宁线路以汉字命名，南京部分线路中也含有'线'命名的线路
+			ArrayList<BusLineModel> busLineModels=new ArrayList<BusLineModel>();
+			busLineModels.addAll(Conn.getInstance(getActivity()).getJNTranInfoDirect(result, false));
+			if(busLineModels.size()==0) {
+				busLineModels.addAll(Conn.getInstance(getActivity()).getTranInfoDirect(result, false));
+			}			
+			if(busLineModels.size()>0) {
+				choiceBusLine(busLineModels);
+			}
+			else {
+				//模糊查询站点
+				ArrayList<StationsModel> stationsModels=new ArrayList<StationsModel>();
+				stationsModels.addAll(Conn.getInstance(getActivity()).getJNStationInfo(result));
+				stationsModels.addAll(Conn.getInstance(getActivity()).getStationInfo(result));
+				choiceStation(stationsModels);
+			}			
 		}
 	}
 	
@@ -356,11 +387,18 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				Intent intent=new Intent(getActivity(), ResultActivity.class);
+				Intent intent=null;
+				if(Conn.getInstance(getActivity()).isJN(busLineModelList.get(which).getId())) {
+					intent=new Intent(getActivity(), ResultJnActivity.class);
+				}
+				else {
+					intent=new Intent(getActivity(), ResultActivity.class);
+				}
 				Bundle bundle=new Bundle();
 				bundle.putString("lineName", busLineModelList.get(which).getLine_name());
 				bundle.putString("stationName", "");
 				bundle.putInt("lineId", busLineModelList.get(which).getId());
+				bundle.putString("inDown", busLineModelList.get(which).getLine_code());
 				intent.putExtras(bundle);
 				getActivity().startActivity(intent);
 			}}).show();
@@ -439,9 +477,18 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 			// TODO Auto-generated method stub
 			if(!s.toString().equals("")) {
 				lists.clear();
-				//判断是不是都是数字，如果都是数字，则为查询线路
-				if(CommonUtils.isNumeric(s.toString())) {					
-					final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(getActivity()).getTranInfo(s.toString()+"路");					
+				//全数字直接精确查询线路
+				if(CommonUtils.isNumeric(s.toString())) {		
+					ArrayList<BusLineModel> busLineModelList=null;
+					//区分江宁与市区
+					if(Conn.getInstance(getActivity()).isJN(s.toString())) {
+						busLineModelList=Conn.getInstance(getActivity()).getJNTranInfoDirect(s.toString(), true);
+					}
+					else {
+						//仅市区线路
+						busLineModelList=Conn.getInstance(getActivity()).getTranInfoDirect(s.toString()+"路", true);
+					}
+					final ArrayList<BusLineModel> busLineModelList_temp=busLineModelList;
 					String[] array=new String[busLineModelList.size()];
 					for(int i=0;i<busLineModelList.size();i++) {
 						HashMap<String, Object> map=new HashMap<String, Object>();
@@ -455,19 +502,37 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 						public void onItemClick(AdapterView<?> parent,
 								View view, int position, long id) {
 							// TODO Auto-generated method stub
-							Intent intent=new Intent(getActivity(), ResultActivity.class);
+							Intent intent=null;
+							if(Conn.getInstance(getActivity()).isJN(busLineModelList_temp.get(position).getId())) {
+								intent=new Intent(getActivity(), ResultJnActivity.class);
+							}
+							else {
+								intent=new Intent(getActivity(), ResultActivity.class);
+							}
 							Bundle bundle=new Bundle();
-							bundle.putString("lineName", busLineModelList.get(position).getLine_name());
+							bundle.putString("lineName", busLineModelList_temp.get(position).getLine_name());
 							bundle.putString("stationName", "");
-							bundle.putInt("lineId", busLineModelList.get(position).getId());
+							bundle.putInt("lineId", busLineModelList_temp.get(position).getId());
+							bundle.putString("inDown", busLineModelList_temp.get(position).getLine_code());
 							intent.putExtras(bundle);
 							getActivity().startActivity(intent);
 						}
 					});
 				}
-				//判断是不是含有数字，如果是，则为包含“路”字的查询线路
+				//含数字直接模糊查询线路
 				else if(CommonUtils.isContainNumeric(s.toString())) {
-					final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(getActivity()).getTranInfo(s.toString());					
+					ArrayList<BusLineModel> busLineModelList=null;
+					if(Conn.getInstance(getActivity()).isJN(s.toString())) {
+						//如果江宁公交包含，则同样还需搜索一遍市区，以防止线路名称冲突
+						ArrayList<BusLineModel> busLineModels=new ArrayList<BusLineModel>();
+						busLineModels.addAll(Conn.getInstance(getActivity()).getJNTranInfoDirect(s.toString(), false));
+						busLineModels.addAll(Conn.getInstance(getActivity()).getTranInfoDirect(s.toString(), false));
+						busLineModelList=busLineModels;
+					}
+					else {
+						busLineModelList=Conn.getInstance(getActivity()).getTranInfoDirect(s.toString(), false);
+					}					
+					final ArrayList<BusLineModel> busLineModelList_temp=busLineModelList;
 					String[] array=new String[busLineModelList.size()];
 					for(int i=0;i<busLineModelList.size();i++) {
 						HashMap<String, Object> map=new HashMap<String, Object>();
@@ -481,42 +546,95 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 						public void onItemClick(AdapterView<?> parent,
 								View view, int position, long id) {
 							// TODO Auto-generated method stub
-							Intent intent=new Intent(getActivity(), ResultActivity.class);
+							Intent intent=null;
+							if(Conn.getInstance(getActivity()).isJN(busLineModelList_temp.get(position).getId())) {
+								intent=new Intent(getActivity(), ResultJnActivity.class);
+							}
+							else {
+								intent=new Intent(getActivity(), ResultActivity.class);
+							}
 							Bundle bundle=new Bundle();
-							bundle.putString("lineName", busLineModelList.get(position).getLine_name());
+							bundle.putString("lineName", busLineModelList_temp.get(position).getLine_name());
 							bundle.putString("stationName", "");
-							bundle.putInt("lineId", busLineModelList.get(position).getId());
+							bundle.putInt("lineId", busLineModelList_temp.get(position).getId());
+							bundle.putString("inDown", busLineModelList_temp.get(position).getLine_code());
 							intent.putExtras(bundle);
 							getActivity().startActivity(intent);
 						}
 					});
 				}
-				//如果不含数字，那就是在查询站点
+				//如果不含数字，除部分线路以全汉字命名，其余都是在查询站点
 				else {
-					final ArrayList<StationsModel> modelListStation=Conn.getInstance(getActivity()).getStationInfo(s.toString());
-					String array[]=new String[modelListStation.size()];
-					for(int i=0;i<modelListStation.size();i++) {
-						HashMap<String, Object> map=new HashMap<String, Object>();
-						array[i]=modelListStation.get(i).getStation_name();
-						map.put("name", array[i]);
-						lists.add(map);
-					}
-					icon_search_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-						@Override
-						public void onItemClick(AdapterView<?> parent,
-								View view, int position, long id) {
-							// TODO Auto-generated method stub
-							Intent intent=new Intent(getActivity(), SearchByStationNameActivity.class);
-							Bundle bundle=new Bundle();
-							bundle.putString("sid", ""+modelListStation.get(position).getId());
-							bundle.putString("stationName", ""+modelListStation.get(position).getStation_name());
-							bundle.putDouble("lat", modelListStation.get(position).getMap_station_lat());
-							bundle.putDouble("long", modelListStation.get(position).getMap_station_long());
-							intent.putExtras(bundle);
-							getActivity().startActivity(intent);
+					//部分江宁线路以汉字命名，南京部分线路中也含有'线'命名的线路
+					final ArrayList<BusLineModel> busLineModelList=new ArrayList<BusLineModel>();
+					busLineModelList.addAll(Conn.getInstance(getActivity()).getJNTranInfoDirect(s.toString(), false));
+					if(busLineModelList.size()==0) {
+						busLineModelList.addAll(Conn.getInstance(getActivity()).getTranInfoDirect(s.toString(), false));
+					}					
+					if(busLineModelList.size()>0) {						
+						String[] array=new String[busLineModelList.size()];
+						for(int i=0;i<busLineModelList.size();i++) {
+							HashMap<String, Object> map=new HashMap<String, Object>();
+							array[i]=busLineModelList.get(i).getLine_name()+" "+busLineModelList.get(i).getStart_from()+"-->"+busLineModelList.get(i).getEnd_location();
+							map.put("name", array[i]);
+							lists.add(map);
 						}
-					});					
+						icon_search_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> parent,
+									View view, int position, long id) {
+								// TODO Auto-generated method stub
+								Intent intent=null;
+								if(Conn.getInstance(getActivity()).isJN(busLineModelList.get(position).getId())) {
+									intent=new Intent(getActivity(), ResultJnActivity.class);
+								}
+								else {
+									intent=new Intent(getActivity(), ResultActivity.class);
+								}
+								Bundle bundle=new Bundle();
+								bundle.putString("lineName", busLineModelList.get(position).getLine_name());
+								bundle.putString("stationName", "");
+								bundle.putInt("lineId", busLineModelList.get(position).getId());
+								bundle.putString("inDown", busLineModelList.get(position).getLine_code());
+								intent.putExtras(bundle);
+								getActivity().startActivity(intent);
+							}
+						});
+					}
+					else {
+						//模糊查询站点
+						final ArrayList<StationsModel> modelListStation=new ArrayList<StationsModel>();
+						modelListStation.addAll(Conn.getInstance(getActivity()).getJNStationInfo(s.toString()));
+						modelListStation.addAll(Conn.getInstance(getActivity()).getStationInfo(s.toString()));
+						
+						String array[]=new String[modelListStation.size()];
+						for(int i=0;i<modelListStation.size();i++) {
+							HashMap<String, Object> map=new HashMap<String, Object>();
+							array[i]=modelListStation.get(i).getStation_name();
+							map.put("name", array[i]);
+							lists.add(map);
+						}
+						icon_search_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> parent,
+									View view, int position, long id) {
+								// TODO Auto-generated method stub
+								Intent intent=new Intent(getActivity(), SearchByStationNameActivity.class);
+								Bundle bundle=new Bundle();
+								bundle.putString("sid", ""+modelListStation.get(position).getId());
+								bundle.putString("stationName", ""+modelListStation.get(position).getStation_name());
+								bundle.putDouble("lat", modelListStation.get(position).getMap_station_lat());
+								bundle.putDouble("long", modelListStation.get(position).getMap_station_long());
+								intent.putExtras(bundle);
+								getActivity().startActivity(intent);
+							}
+						});
+					}
+					
+					
+										
 				}
 				result_adapter.notifyDataSetChanged();
 			}

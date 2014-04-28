@@ -115,9 +115,15 @@ public class CommonUtils {
 	 * @param sqliteName
 	 */
 	public static void copyDbFile(Context context) {
-		File file=new File("/data/data/"+context.getPackageName()+"/iso2014.db");
-		if(!file.exists()) {
-			CommonUtils.copyAssetsFile("iso2014.db", file.getPath(), context);
+		//南京数据库
+		File file_iso2014=new File("/data/data/"+context.getPackageName()+"/iso2014.db");
+		if(!file_iso2014.exists()) {
+			CommonUtils.copyAssetsFile("iso2014.db", file_iso2014.getPath(), context);
+		}
+		//江宁数据库
+		File file_BusDB=new File("/data/data/"+context.getPackageName()+"/jn.db");
+		if(!file_BusDB.exists()) {
+			CommonUtils.copyAssetsFile("jn.db", file_BusDB.getPath(), context);
 		}
 	}
 	
@@ -377,5 +383,50 @@ public class CommonUtils {
 		else {
 			return m1(((double)dis)/1000)+"km";
 		}
+	}
+	
+	public static HashMap<String, String> lineNameMap=null;
+	/**
+	 * 返回江宁数据库中站点名称
+	 * @param lineName
+	 * @return
+	 */
+	public static String isJnFromNJDB(String lineName) {
+		if(lineNameMap==null) {
+			HashMap<String, String> map=new HashMap<String, String>();
+			map.put("101路", "101"); map.put("101区间", "101"); map.put("101路大站快车", "101");
+			map.put("102路", "102"); map.put("103路", "103"); map.put("104路", "104");
+			map.put("105路", "105"); map.put("106路", "106"); map.put("119路", "119");
+			map.put("137路", "137"); map.put("137区间", "137"); map.put("148路", "148");
+			map.put("164路", "164"); map.put("180路", "180"); map.put("190路", "190");
+			map.put("191路", "191"); map.put("192路", "192"); map.put("821路", "821");
+			map.put("827", "827"); map.put("D6", "D6"); map.put("D8", "D8");
+			map.put("安丹线", "安丹"); map.put("淳青线", "淳青"); map.put("东谷线", "东谷");
+			map.put("东井线", "东井"); map.put("东上线", "东上"); map.put("东土线", "东土");
+			map.put("东铜线", "东铜"); map.put("东旺线", "东旺"); map.put("东周线", "东周");
+			map.put("东麒线", "东麒"); map.put("谷桃", "谷桃"); map.put("谷西线", "谷西");
+			map.put("谷水线", "谷水"); map.put("谷农线", "谷农"); map.put("谷金线", "谷金");
+			map.put("谷板线", "谷板"); map.put("谷柏线", "谷柏"); map.put("江宁游1路", "江宁游1");
+			map.put("广科线", "广科"); map.put("广龙线", "广龙"); map.put("金丹线", "金丹");
+			map.put("金湖线", "金湖"); map.put("金陆线", "金陆"); map.put("金汤线", "金汤");
+			map.put("金秣线", "金秣"); map.put("金麒线", "金麒"); map.put("开港线", "开港");
+			map.put("龙西线", "龙西"); map.put("禄陶线", "禄陶"); map.put("陆大线", "陆大");
+			map.put("陆九线", "陆九"); map.put("陆朱线", "陆朱"); map.put("宁井线", "宁井");
+			map.put("清安线", "清安"); map.put("江宁1路", "区1"); map.put("江宁10路", "区10");
+			map.put("江宁12路", "区12"); map.put("江宁15路", "区15"); map.put("江宁16路", "区16");
+			map.put("江宁17路", "区17"); map.put("江宁19路", "区19"); map.put("江宁2路", "区2");
+			map.put("江宁20路", "区20"); map.put("江宁21路", "区21"); map.put("江宁22路", "区22");
+			map.put("江宁23路", "区23"); map.put("江宁27路", "区27"); map.put("江宁29路", "区29");
+			map.put("江宁3路", "区3"); map.put("江宁30路", "区30"); map.put("江宁31路", "区31");
+			map.put("江宁4路", "区4"); map.put("江宁6路", "区6"); map.put("江宁8路", "区8");
+			map.put("胜周线", "胜周"); map.put("陶云线", "陶云"); map.put("义旺线", "义旺");
+			map.put("雨谷线", "雨谷"); map.put("周东线", "周东"); map.put("周和线", "周和");
+			map.put("周河线", "周河"); map.put("周石线", "周石"); 
+			lineNameMap=map;
+		}
+		if(lineNameMap.containsKey(lineName)) {
+			return lineNameMap.get(lineName);
+		}
+		return null;
 	}
 }

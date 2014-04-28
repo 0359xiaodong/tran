@@ -286,7 +286,7 @@ public class CurrentStationMapActivity extends Activity implements
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(getApplicationContext()).getTranInfo(a_s_libs_obj.split("/")[which]);
+				final ArrayList<BusLineModel> busLineModelList=Conn.getInstance(getApplicationContext()).getTranInfoDirect(a_s_libs_obj.split("/")[which], true);
 				String[] array=new String[busLineModelList.size()];
 				for(int i=0;i<busLineModelList.size();i++) {
 					array[i]=busLineModelList.get(i).getLine_name()+" "+busLineModelList.get(i).getStart_from()+"-->"+busLineModelList.get(i).getEnd_location();

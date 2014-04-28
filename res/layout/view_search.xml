@@ -48,7 +48,7 @@
 	    		android:layout_height="wrap_content" />      
 	    </RelativeLayout>
 		<TextView 
-		    android:text="注：可查询公交线路或者站点"
+		    android:text="注意：\n(1)可查询公交线路或者站点\n(2)江宁部分公交线路请以区x进行查询，比如区10\n"
 		    android:textSize="14sp"
 	    	android:layout_marginLeft="10dip"
 	   		android:layout_width="fill_parent"

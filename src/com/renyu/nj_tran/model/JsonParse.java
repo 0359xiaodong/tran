@@ -116,5 +116,52 @@ public class JsonParse {
 		}
 		return modelList;
 	}
+	
+	public static LinkedList<StationByIdModel> getGetJNStationByIdModelList(String str) {
+		LinkedList<StationByIdModel> modelLists=null;
+		try {
+			JSONObject obj=new JSONObject(str);
+			JSONArray rows=obj.getJSONArray("rows");
+			if(rows.length()>0) {
+				modelLists=new LinkedList<StationByIdModel>();
+			}
+			for(int i=0;i<rows.length();i++) {
+				StationByIdModel model=new StationByIdModel();
+				JSONObject row=rows.getJSONObject(i);
+				model.setId(row.getInt("id"));
+				model.setName(row.getString("text"));
+				modelLists.add(model);
+			}
+			return modelLists;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static ArrayList<CurrentJnBusModel> getCurrentJnBusList(String str) {
+		ArrayList<CurrentJnBusModel> modelLists=null;
+		try {
+			JSONObject obj=new JSONObject(str);
+			JSONArray rows=obj.getJSONArray("rows");
+			if(rows.length()>0) {
+				modelLists=new ArrayList<CurrentJnBusModel>();
+			}
+			for(int i=0;i<rows.length();i++) {
+				CurrentJnBusModel model=new CurrentJnBusModel();
+				JSONObject row=rows.getJSONObject(i);
+				model.setDis(row.getString("dis"));
+				model.setStationName(row.getString("stationName"));
+				model.setStationNo(row.getInt("stationNo"));
+				modelLists.add(model);
+			}
+			return modelLists;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

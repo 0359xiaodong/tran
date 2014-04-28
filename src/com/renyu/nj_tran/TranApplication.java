@@ -1,5 +1,6 @@
 package com.renyu.nj_tran;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
@@ -13,6 +14,7 @@ public class TranApplication extends Application {
 	
 	public boolean appOpen=false;
 	public String currentLatLng="";
+	public HashMap<String, String> jn_offline_maps=null;
 
 	@Override
 	public void onCreate() {
