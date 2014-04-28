@@ -220,10 +220,13 @@ public class ResultJnActivity extends Activity implements OnRefreshListener {
 						modelListBus.clear();
 						modelListBus.addAll(modelListBusTemp);
 						adapter.notifyDataSetChanged();
+						handler_main.postDelayed(runnable_main, 10000);
+					}
+					else {
+						Toast.makeText(ResultJnActivity.this, "暂未获取到汽车位置信息", 3000).show();
 					}
 				}
 				isBusRefresh=false;
-				handler_main.postDelayed(runnable_main, 10000);
 			}
 		};
 		

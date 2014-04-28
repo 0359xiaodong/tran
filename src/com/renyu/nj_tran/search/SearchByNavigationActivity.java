@@ -27,9 +27,7 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.amap.api.services.route.WalkStep;
 import com.baidu.mobstat.StatService;
 import com.renyu.nj_tran.R;
-import com.renyu.nj_tran.busresult.ResultActivity;
 import com.renyu.nj_tran.commons.CommonUtils;
-import com.renyu.nj_tran.commons.Conn;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -357,14 +355,6 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 				textview.setText(Html.fromHtml("乘坐<font color='red'>"+step.getBusLine().getBusLineName()+"</font><br>在<font color='blue'>"+step.getBusLine().getDepartureBusStation().getBusStationName()+"</font>站上车，经过<font color='blue'>"+(step.getBusLine().getPassStationNum()+1)+"</font>站，至<font color='blue'>"+step.getBusLine().getArrivalBusStation().getBusStationName()+"</font>站下车"));
 				textview.setTextColor(Color.GRAY);
 				textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-				final String name=step.getBusLine().getBusLineName();
-				textview.setOnClickListener(new TextView.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						findDetail(name);
-					}});
 				navigation_map_bus_line_layout.addView(textview, params);
 				TextView textview_line=new TextView(SearchByNavigationActivity.this);
 				textview_line.setBackgroundColor(Color.BLACK);
@@ -406,34 +396,7 @@ public class SearchByNavigationActivity extends Activity implements OnRouteSearc
 	@Override
 	public boolean onMarkerClick(Marker arg0) {
 		// TODO Auto-generated method stub
-		findDetail(arg0.getTitle());
-		
 		return false;
-	}
-	
-	private void findDetail(String title) {
-		int luIndex=title.indexOf("路");
-		if(luIndex==-1) {
-			Toast.makeText(SearchByNavigationActivity.this, "暂未查找到相关公交信息", 3000).show();
-			return;
-		}
-		String lu=title.substring(0, luIndex+1);
-		
-		int _leftIndex=title.indexOf("(");
-		int _rightIndex=title.length();
-		String _name=title.substring(_leftIndex+1, _rightIndex-1);
-		String startName=_name.split("--")[0];
-		String endName=_name.split("--")[1];
-		
-		int lineId=Conn.getInstance(getApplicationContext()).getLineId(lu, startName, endName);
-		
-		Intent intent=new Intent(SearchByNavigationActivity.this, ResultActivity.class);
-		Bundle bundle=new Bundle();
-		bundle.putString("lineName", lu);
-		bundle.putString("stationName", "");
-		bundle.putInt("lineId", lineId);
-		intent.putExtras(bundle);
-		startActivity(intent);
 	}
 	
 }
