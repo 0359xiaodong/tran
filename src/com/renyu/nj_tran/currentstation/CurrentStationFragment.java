@@ -172,7 +172,7 @@ public class CurrentStationFragment extends Fragment implements OnRefreshListene
 			// TODO Auto-generated method stub
 			if(intent.getAction().equals(GPSService.GPSACTION)) {
 				tab_mainbody_location.setText(intent.getExtras().getString("desc"));
-				getArroundStation(118.833182, 31.959882);
+				getArroundStation(intent.getExtras().getDouble("geoLng"), intent.getExtras().getDouble("geoLat"));
 				geoLat=intent.getExtras().getDouble("geoLat");
 				geoLng=intent.getExtras().getDouble("geoLng");
 				desp=intent.getExtras().getString("desc");
