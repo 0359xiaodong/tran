@@ -25,6 +25,7 @@
 	    		android:layout_height="wrap_content"/> 
 	   		<ImageView
 	            android:id="@+id/icon_search_voice"
+	            android:visibility="gone"
 	            android:layout_width="40dip"
 	            android:layout_height="40dip"
 	            android:layout_centerVertical="true"
