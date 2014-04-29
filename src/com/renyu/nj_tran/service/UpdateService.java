@@ -57,41 +57,47 @@ public class UpdateService extends Service {
 						return ;
 					} 
 					final String downloadresult=result;
-					int versionCode=Integer.parseInt(result.split("-")[0]);
-					if(versionCode>CommonUtils.getVersionCode(UpdateService.this)) {
-						
-						AlertDialog.Builder builder=new AlertDialog.Builder(UpdateService.this);
-				        builder.setTitle("升级提醒");
-				        builder.setMessage(result.split("-")[1]);
-				        builder.setPositiveButton("好的", new DialogInterface.OnClickListener() {
+					//在连接cmcc等网络时会产生异常
+					try {
+						int versionCode=Integer.parseInt(result.split("-")[0]);
+						if(versionCode>CommonUtils.getVersionCode(UpdateService.this)) {
+							
+							AlertDialog.Builder builder=new AlertDialog.Builder(UpdateService.this);
+					        builder.setTitle("升级提醒");
+					        builder.setMessage(result.split("-")[1]);
+					        builder.setPositiveButton("好的", new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								Intent intent=new Intent(UpdateService.this, DownloadService.class);
-								Bundle bundle=new Bundle();
-								bundle.putString("download_url", downloadresult.split("-")[2]);
-								bundle.putString("download_version", downloadresult.split("-")[0]);
-								intent.putExtras(bundle);
-								startService(intent);
-							}});
-				        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									Intent intent=new Intent(UpdateService.this, DownloadService.class);
+									Bundle bundle=new Bundle();
+									bundle.putString("download_url", downloadresult.split("-")[2]);
+									bundle.putString("download_version", downloadresult.split("-")[0]);
+									intent.putExtras(bundle);
+									startService(intent);
+								}});
+					        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								
-							}});
-						final AlertDialog dialog=builder.create(); 
-				        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-				        dialog.setCanceledOnTouchOutside(false); 
-				        dialog.show(); 
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									
+								}});
+							final AlertDialog dialog=builder.create(); 
+					        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+					        dialog.setCanceledOnTouchOutside(false); 
+					        dialog.show(); 
+						}
+						else {
+							if(from.equals("setting")) {
+								Toast.makeText(UpdateService.this, "您目前使用的是最新版本", 3000).show();
+							}					
+						}
+					} catch(Exception e) {
+						e.printStackTrace();
 					}
-					else {
-						if(from.equals("setting")) {
-							Toast.makeText(UpdateService.this, "您目前使用的是最新版本", 3000).show();
-						}					
-					}
+					
 				}				
 				stopSelf();
 			}

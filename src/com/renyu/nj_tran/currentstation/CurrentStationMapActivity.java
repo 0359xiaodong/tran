@@ -220,6 +220,9 @@ public class CurrentStationMapActivity extends Activity implements
 		modelList.addAll((ArrayList<ArroundStationModel>) getIntent().getExtras().getSerializable("modelList"));
 		Builder builders=new LatLngBounds.Builder().include(myLatLng);
 		for(int i=0;i<modelList.size();i++) {
+			if(modelList.get(i).getLids_list().size()==0) {
+				continue;
+			}
 			HashMap<String, Object> map=new HashMap<String, Object>();
 			map.put("a_s_name", modelList.get(i).getName());
 			String libs_="";

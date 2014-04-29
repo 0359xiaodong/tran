@@ -224,13 +224,11 @@ public class ResultActivity extends Activity implements OnRefreshListener {
 				title_pb.setVisibility(View.INVISIBLE);
 				if(msg.obj!=null) {
 					modelListBus.clear();
-					modelListBus.addAll(JsonParse.getCurrentBusList(msg.obj.toString()));
-					adapter.notifyDataSetChanged();
-					if(modelListBus.size()==0&&!isNeedTip) {
-						Toast.makeText(ResultActivity.this, "暂未获取到汽车位置信息", 3000).show();
-						isNeedTip=true;
-					}
-					else if(modelListBus.size()>0) {
+					ArrayList<CurrentBusModel> modelListBusTemp=JsonParse.getCurrentBusList(msg.obj.toString());
+					if(modelListBusTemp!=null&&modelListBusTemp.size()>0) {
+						modelListBus.addAll(JsonParse.getCurrentBusList(msg.obj.toString()));
+						adapter.notifyDataSetChanged();
+						
 						isNeedTip=false;
 						
 						//发送地图刷新广播
@@ -240,6 +238,12 @@ public class ResultActivity extends Activity implements OnRefreshListener {
 						bundle.putSerializable("modelListBus", modelListBus);
 						intent.putExtras(bundle);
 						sendBroadcast(intent);
+					}
+					else {
+						if(!isNeedTip) {
+							Toast.makeText(ResultActivity.this, "暂未获取到汽车位置信息", 3000).show();
+							isNeedTip=true;
+						}
 					}
 				}
 				isBusRefresh=false;
