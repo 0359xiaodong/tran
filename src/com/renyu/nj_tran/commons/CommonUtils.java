@@ -412,7 +412,7 @@ public class CommonUtils {
 			map.put("金秣线", "金秣"); map.put("金麒线", "金麒"); map.put("开港线", "开港");
 			map.put("龙西线", "龙西"); map.put("禄陶线", "禄陶"); map.put("陆大线", "陆大");
 			map.put("陆九线", "陆九"); map.put("陆朱线", "陆朱"); map.put("宁井线", "宁井");
-			map.put("清安线", "清安"); map.put("江宁1路", "区1"); map.put("江宁10路", "区10");
+			map.put("清安线", "清安"); map.put("江宁1路", "区1");
 			map.put("江宁12路", "区12"); map.put("江宁15路", "区15"); map.put("江宁16路", "区16");
 			map.put("江宁17路", "区17"); map.put("江宁19路", "区19"); map.put("江宁2路", "区2");
 			map.put("江宁20路", "区20"); map.put("江宁21路", "区21"); map.put("江宁22路", "区22");

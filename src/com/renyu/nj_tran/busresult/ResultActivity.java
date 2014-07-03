@@ -258,6 +258,7 @@ public class ResultActivity extends Activity implements OnRefreshListener {
 				// TODO Auto-generated method stub
 				HashMap<String, String> map=new HashMap<String, String>();
 				Message m=new Message();
+				System.out.println("http://trafficomm.jstv.com/smartBus/Module=BusHelper/Controller=BusInfo/Action=GetCurrentBus/LineName=/StationName="+Uri.encode(getIntent().getExtras().getString("stationName"))+"/LineName="+getIntent().getExtras().getString("lineName")+"/Destination="+Uri.encode(destination)+"/key=07e1e5b97fc0f50b1bd842ceb1666973");
 				m.obj=CommonUtils.getWebData(map, "http://trafficomm.jstv.com/smartBus/Module=BusHelper/Controller=BusInfo/Action=GetCurrentBus/LineName=/StationName="+Uri.encode(getIntent().getExtras().getString("stationName"))+"/LineName="+getIntent().getExtras().getString("lineName")+"/Destination="+Uri.encode(destination)+"/key=07e1e5b97fc0f50b1bd842ceb1666973");
 				handler.sendMessage(m);
 			}

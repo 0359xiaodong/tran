@@ -318,8 +318,12 @@ public class Conn extends SQLiteOpenHelper {
 	 * @param lineName
 	 * @return
 	 */
-	public boolean isJN(int lineId) {
+	public boolean isJN(int lineId, String lineName) {
 		synchronized (this) {
+			//含有路，一定不是江宁公交
+			if(lineName.indexOf("路")!=-1) {
+				return false;
+			}
 			boolean flag=false;
 			File file=new File("/data/data/"+context.getPackageName()+"/jn.db");
 			SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(file.getPath(), null); 

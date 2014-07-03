@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="lib" path="libs/Android_Location_V1.0.5.jar"/>
+	<classpathentry kind="lib" path="libs/Android_Map_2.1.4.jar"/>
+	<classpathentry kind="lib" path="libs/Android_Services_2.1.4.jar"/>
+	<classpathentry kind="lib" path="libs/jpush-sdk-release1.6.1.jar"/>
+	<classpathentry kind="lib" path="libs/android_api_3_4.jar"/>
+	<classpathentry kind="lib" path="libs/wxvoice.jar"/>
+	<classpathentry kind="lib" path="libs/jericho-html-3.3.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

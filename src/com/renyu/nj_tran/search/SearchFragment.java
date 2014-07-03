@@ -388,7 +388,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
 				Intent intent=null;
-				if(Conn.getInstance(getActivity()).isJN(busLineModelList.get(which).getId())) {
+				if(Conn.getInstance(getActivity()).isJN(busLineModelList.get(which).getId(), busLineModelList.get(which).getLine_name())) {
 					intent=new Intent(getActivity(), ResultJnActivity.class);
 				}
 				else {
@@ -503,7 +503,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 								View view, int position, long id) {
 							// TODO Auto-generated method stub
 							Intent intent=null;
-							if(Conn.getInstance(getActivity()).isJN(busLineModelList_temp.get(position).getId())) {
+							if(Conn.getInstance(getActivity()).isJN(busLineModelList_temp.get(position).getId(), busLineModelList_temp.get(position).getLine_name())) {
 								intent=new Intent(getActivity(), ResultJnActivity.class);
 							}
 							else {
@@ -547,7 +547,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 								View view, int position, long id) {
 							// TODO Auto-generated method stub
 							Intent intent=null;
-							if(Conn.getInstance(getActivity()).isJN(busLineModelList_temp.get(position).getId())) {
+							if(Conn.getInstance(getActivity()).isJN(busLineModelList_temp.get(position).getId(), busLineModelList_temp.get(position).getLine_name())) {
 								intent=new Intent(getActivity(), ResultJnActivity.class);
 							}
 							else {
@@ -586,7 +586,7 @@ public class SearchFragment extends Fragment implements OnEditorActionListener, 
 									View view, int position, long id) {
 								// TODO Auto-generated method stub
 								Intent intent=null;
-								if(Conn.getInstance(getActivity()).isJN(busLineModelList.get(position).getId())) {
+								if(Conn.getInstance(getActivity()).isJN(busLineModelList.get(position).getId(), busLineModelList.get(position).getLine_name())) {
 									intent=new Intent(getActivity(), ResultJnActivity.class);
 								}
 								else {
