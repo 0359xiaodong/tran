@@ -198,7 +198,7 @@ public class ResultJnActivity extends Activity implements OnRefreshListener {
 				// TODO Auto-generated method stub
 				Message m=new Message();
 				HashMap<String, String> map=new HashMap<String, String>();
-				m.obj=CommonUtils.getWebData(map, "http://112.2.33.3:7106/BusAndroid/android.do?command=toSta&lineId="+getIntent().getExtras().getInt("lineId")+"&inDown="+(Integer.parseInt(getIntent().getExtras().getString("inDown"))+1));
+				m.obj=CommonUtils.getWebData(map, "http://112.2.33.3:5902/BusAndroid/android.do?command=toSta&lineId="+getIntent().getExtras().getInt("lineId")+"&inDown="+(Integer.parseInt(getIntent().getExtras().getString("inDown"))+1));
 				handler.sendMessage(m);
 			}
 			
@@ -237,7 +237,7 @@ public class ResultJnActivity extends Activity implements OnRefreshListener {
 				// TODO Auto-generated method stub
 				Message m=new Message();
 				HashMap<String, String> map=new HashMap<String, String>();
-				m.obj=CommonUtils.getWebData(map, "http://112.2.33.3:7106/BusAndroid/android.do?command=toDis&lineId="+getIntent().getExtras().getInt("lineId")+"&inDown="+(Integer.parseInt(getIntent().getExtras().getString("inDown"))+1)+"&stationNo="+modelListStation.get(modelListStation.size()-1).getId());
+				m.obj=CommonUtils.getWebData(map, "http://112.2.33.3:5902/BusAndroid/android.do?command=toDis&lineId="+getIntent().getExtras().getInt("lineId")+"&inDown="+(Integer.parseInt(getIntent().getExtras().getString("inDown"))+1)+"&stationNo="+modelListStation.get(modelListStation.size()-1).getId());
 				handler.sendMessage(m);
 			}
 			
@@ -307,7 +307,7 @@ public class ResultJnActivity extends Activity implements OnRefreshListener {
 				m.obj="";
 				try {
 					//System.out.println("http://112.2.33.3:7106/wap/line.do?command=toDiss2&stationNo="+stationNo+"&stationName="+Uri.encode(stationName)+"&lineId="+lineId+"&inDown="+inDown+"&lineName="+lineName+"&strInfo="+Uri.encode(strInfo));					
-					Source source=new Source(new URL("http://112.2.33.3:7106/wap/line.do?command=toDiss2&stationNo="+stationNo+"&stationName="+Uri.encode(stationName)+"&lineId="+lineId+"&inDown="+inDown+"&lineName="+lineName+"&strInfo="+Uri.encode(strInfo)));
+					Source source=new Source(new URL("http://112.2.33.3:5902/wap/line.do?command=toDiss2&stationNo="+stationNo+"&stationName="+Uri.encode(stationName)+"&lineId="+lineId+"&inDown="+inDown+"&lineName="+lineName+"&strInfo="+Uri.encode(strInfo)));
 					List<Element> trList=source.getAllElements(HTMLElementName.DIV);
 					for(int i=0;i<trList.size();i++) {
 						Element ele=trList.get(i);						
@@ -345,7 +345,7 @@ public class ResultJnActivity extends Activity implements OnRefreshListener {
 				// TODO Auto-generated method stub
 				Message m=new Message();
 				try {
-					Source source=new Source(new URL("http://112.2.33.3:7106/wap/line.do?command=toLn"));
+					Source source=new Source(new URL("http://112.2.33.3:5902/wap/line.do?command=toLn"));
 					List<Element> trList=source.getAllElements(HTMLElementName.SELECT);
 					String result=trList.get(0).getContent().toString();
 					String[] results=result.split("\"");

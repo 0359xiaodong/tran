@@ -1,5 +1,6 @@
 package com.renyu.nj_tran;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -15,6 +16,12 @@ public class TranApplication extends Application {
 	public boolean appOpen=false;
 	public String currentLatLng="";
 	public HashMap<String, String> jn_offline_maps=null;
+	//当前下载任务
+	public ArrayList<String> tasks=null;
+	//升级notification
+	public static final String UPDATE="100";
+	//推荐notification
+	public static final String adv1="200"; 
 
 	@Override
 	public void onCreate() {
@@ -38,5 +45,10 @@ public class TranApplication extends Application {
 		//首次运行拷贝数据库文件
 		CommonUtils.copyDbFile(getApplicationContext());
 		
+		tasks=new ArrayList<String>();
+	}
+	
+	public ArrayList<String> getAllTask() {
+		return tasks;
 	}
 }

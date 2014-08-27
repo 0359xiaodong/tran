@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.renyu.nj_tran.R;
+import com.renyu.nj_tran.TranApplication;
 import com.renyu.nj_tran.commons.CommonUtils;
 
 import android.app.Notification;
@@ -44,10 +45,15 @@ public class DownloadService extends Service {
 		if(intent==null) {
 			return super.onStartCommand(intent, flags, startId);
 		}
-		
+		if(((TranApplication) getApplication()).getAllTask().contains(intent.getExtras().getString("download_id"))) {
+			return super.onStartCommand(intent, flags, startId);
+		}
+		else {
+			((TranApplication) getApplication()).getAllTask().add(intent.getExtras().getString("download_id"));
+		}
 		String download_url=intent.getExtras().getString("download_url");
 		String download_name=getResources().getString(R.string.app_name);
-		String download_id="100";
+		String download_id=intent.getExtras().getString("download_id");
 		String download_version=intent.getExtras().getString("download_version");
 		
 		NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -107,7 +113,7 @@ public class DownloadService extends Service {
 					Toast.makeText(DownloadService.this, "œ¬‘ÿ ß∞‹£¨«Î…‘∫Û‘Ÿ ‘", 3000).show();
 					break;
 				}
-				
+				((TranApplication) getApplication()).getAllTask().remove(download_id);
 			}
 		};
 		

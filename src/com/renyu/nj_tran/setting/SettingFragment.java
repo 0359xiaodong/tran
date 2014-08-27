@@ -18,7 +18,9 @@ import android.content.DialogInterface;
 import com.amap.api.maps.MapsInitializer;
 import com.amap.api.maps.offlinemap.OfflineMapStatus;
 import com.renyu.nj_tran.R;
+import com.renyu.nj_tran.TranApplication;
 import com.renyu.nj_tran.commons.CommonUtils;
+import com.renyu.nj_tran.service.DownloadService;
 import com.renyu.nj_tran.service.OfflineMapService;
 import com.renyu.nj_tran.service.UpdateService;
 
@@ -32,6 +34,8 @@ public class SettingFragment extends Fragment {
 	TextView download_state=null;
 	LinearLayout setting_update=null;
 	LinearLayout setting_about=null;
+	
+	LinearLayout setting_bike=null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +131,21 @@ public class SettingFragment extends Fragment {
 					// TODO Auto-generated method stub
 					Intent intent=new Intent(getActivity(), AboutActivity.class);
 					getActivity().startActivity(intent);
+				}});
+			
+			setting_bike=(LinearLayout) view.findViewById(R.id.setting_bike);
+			setting_bike.setOnClickListener(new LinearLayout.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Intent intent=new Intent(getActivity(), DownloadService.class);
+					Bundle bundle=new Bundle();
+					bundle.putString("download_url", "http://mabin.qiniudn.com/BikeForNJ.apk");
+					bundle.putString("download_version", "0");
+					bundle.putString("download_id", TranApplication.adv1);
+					intent.putExtras(bundle);
+					getActivity().startService(intent);
 				}});
 		}
 		

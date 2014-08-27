@@ -3,6 +3,7 @@ package com.renyu.nj_tran.service;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
+import com.renyu.nj_tran.TranApplication;
 import com.renyu.nj_tran.commons.CommonUtils;
 
 import android.app.AlertDialog;
@@ -74,6 +75,7 @@ public class UpdateService extends Service {
 									Bundle bundle=new Bundle();
 									bundle.putString("download_url", downloadresult.split("-")[2]);
 									bundle.putString("download_version", downloadresult.split("-")[0]);
+									bundle.putString("download_id", TranApplication.UPDATE);
 									intent.putExtras(bundle);
 									startService(intent);
 								}});

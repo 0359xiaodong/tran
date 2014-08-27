@@ -76,7 +76,7 @@
 			        android:orientation="vertical"
 			        android:layout_width="fill_parent"
 			       	android:layout_height="wrap_content"
-			       	android:gravity="center">				       	    	        
+			       	android:gravity="center">
 			        <View 
 			            android:background="@drawable/list_blockbg_divider" 
 			            android:layout_width="fill_parent" 
@@ -121,11 +121,11 @@
 			        android:orientation="vertical"
 			        android:layout_width="fill_parent"
 			       	android:layout_height="wrap_content"
-			       	android:gravity="center">				       	    	        
+			       	android:gravity="center">		
 			        <View 
 			            android:background="@drawable/list_blockbg_divider" 
 			            android:layout_width="fill_parent" 
-			            android:layout_height="1.0dip" />			            
+			            android:layout_height="1.0dip" />	            
 			        <LinearLayout 
 				        android:orientation="horizontal"
 				        android:layout_width="fill_parent"
@@ -153,6 +153,47 @@
 				        </LinearLayout>
 			        </LinearLayout>			        	        
 			    </LinearLayout>
+		    </LinearLayout>
+		    <LinearLayout 
+		        android:orientation="vertical"
+		        android:layout_width="fill_parent"
+	        	android:layout_height="wrap_content"
+	        	android:layout_marginTop="12dip"
+	        	android:background="@drawable/list_blockbg_normal">
+		        <LinearLayout 
+		            android:id="@+id/setting_bike"
+			        android:orientation="horizontal"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:padding="10dip"
+			       	android:gravity="center">
+			        <ImageView 
+			            android:src="@drawable/adv_bike"
+			        	android:layout_width="wrap_content"
+			        	android:layout_height="wrap_content"/>
+			        <LinearLayout 
+			            android:orientation="vertical"
+			        	android:layout_width="match_parent"
+			        	android:layout_height="wrap_content">
+			            <TextView             
+				        	android:text="南京公共自行车"
+				        	android:textSize="16sp"
+				            android:gravity="left"
+				            android:layout_marginLeft="12.0dip"
+				            android:textColor="@android:color/black"
+				            android:layout_width="fill_parent"
+				       		android:layout_height="wrap_content"/>
+			            <TextView             
+				        	android:text="绿色出行好帮手，支持实时查询南京本地公共自行车车站位置以及可借车辆数量"
+				        	android:textSize="13sp"
+				            android:gravity="left"
+				            android:layout_marginLeft="12.0dip"
+				            android:layout_marginTop="3dip"
+				            android:textColor="@android:color/darker_gray"
+				            android:layout_width="fill_parent"
+				       		android:layout_height="wrap_content"/>
+			        </LinearLayout>
+		        </LinearLayout>
 		    </LinearLayout>
 	    </LinearLayout>	    
     </RelativeLayout>
